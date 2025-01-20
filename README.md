@@ -1,27 +1,55 @@
-# amigo.secreto
+let amigos = [];
 
-Projeto para organizar sorteios de **Amigo Secreto** de maneira simples e divertida. O sistema permite que o usuário adicione nomes de amigos e realize o sorteio, garantindo que ninguém tire a si mesmo.
+function adicionarAmigo() {
+    const nomeInput = document.getElementById('amigo');
+    const nome = nomeInput.value.trim();
 
-## Funcionalidades
+    if (nome) {
+        amigos.push(nome);
+        nomeInput.value = '';  // Limpar o campo de input
+        atualizarListaAmigos();
+    }
+}
 
-- Adicionar nomes de amigos à lista.
-- Sortear os amigos de maneira aleatória.
-- Exibir o resultado com quem tirou quem.
+function atualizarListaAmigos() {
+    const lista = document.getElementById('listaAmigos');
+    lista.innerHTML = ''; // Limpar a lista antes de atualizar
 
-## Tecnologias Utilizadas
+    amigos.forEach(amigo => {
+        const li = document.createElement('li');
+        li.textContent = amigo;
+        lista.appendChild(li);
+    });
+}
 
-- **HTML**: Estrutura da página.
-- **CSS**: Estilização do layout.
-- **JavaScript**: Lógica de sorteio e manipulação da lista de amigos.
+function sortearAmigo() {
+    if (amigos.length < 2) {
+        alert('Adicione pelo menos dois amigos para realizar o sorteio!');
+        return;
+    }
 
-## Como Usar
+    let sorteio = [];
+    let copiaAmigos = [...amigos];
 
-### Pré-requisitos
+    // Sorteio sem repetição
+    copiaAmigos.forEach(amigo => {
+        let index = Math.floor(Math.random() * copiaAmigos.length);
+        while (copiaAmigos[index] === amigo) {
+            index = Math.floor(Math.random() * copiaAmigos.length); // Garantir que ninguém se tire
+        }
+        sorteio.push({ amigo, sorteado: copiaAmigos.splice(index, 1)[0] });
+    });
 
-- Um navegador web (Google Chrome, Firefox, etc.).
+    mostrarResultado(sorteio);
+}
 
-### Como rodar
+function mostrarResultado(sorteio) {
+    const resultadoLista = document.getElementById('resultado');
+    resultadoLista.innerHTML = ''; // Limpar o resultado
 
-1. **Clone o repositório:**
-   ```bash
-   git clone [https://github.com/seu-usuario/amigo-secreto.git]
+    sorteio.forEach(({ amigo, sorteado }) => {
+        const li = document.createElement('li');
+        li.textContent = `${amigo} tirou ${sorteado}`;
+        resultadoLista.appendChild(li);
+    });
+}
